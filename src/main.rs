@@ -24,12 +24,12 @@ fn main() -> ExitCode {
         Ok(Command::Run(args)) => match run(args) {
             Ok(()) => ExitCode::SUCCESS,
             Err(error) => {
-                eprintln!("Error: {error}");
+                eprintln!("Ошибка: {error}");
                 ExitCode::from(1)
             }
         },
         Err(error) => {
-            eprintln!("Error: {error}");
+            eprintln!("Ошибка: {error}");
             eprintln!("{}", usage());
             ExitCode::from(1)
         }
@@ -72,7 +72,7 @@ where
                     Some(argument_value(&args, &mut index, "--output-format")?.parse()?);
             }
             other => {
-                return Err(Error::InvalidArgument(format!("unknown argument {other}")));
+                return Err(Error::InvalidArgument(format!("неизвестный аргумент {other}")));
             }
         }
 
@@ -90,13 +90,13 @@ fn argument_value<'a>(args: &'a [String], index: &mut usize, flag: &str) -> Resu
     *index += 1;
     args.get(*index)
         .map(String::as_str)
-        .ok_or_else(|| Error::InvalidArgument(format!("missing value for {flag}")))
+        .ok_or_else(|| Error::InvalidArgument(format!("отсутствует значение для {flag}")))
 }
 
 fn missing_argument(flag: &str) -> Error {
-    Error::InvalidArgument(format!("missing required argument {flag}"))
+    Error::InvalidArgument(format!("отсутствует обязательный аргумент {flag}"))
 }
 
 fn usage() -> &'static str {
-    "Usage: ypbank_converter --input <file> --input-format <csv|text|binary> --output-format <csv|text|binary>"
+    "Использование: ypbank_converter --input <файл> --input-format <csv|text|binary> --output-format <csv|text|binary>"
 }

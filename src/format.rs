@@ -2,14 +2,14 @@ use crate::error::{Error, Result};
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 
-/// Supported YPBank file formats.
+/// Поддерживаемые форматы файлов YPBank.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Format {
-    /// `YPBankCsv` format.
+    /// Формат `YPBankCsv`.
     Csv,
-    /// `YPBankText` format.
+    /// Формат `YPBankText`.
     Text,
-    /// `YPBankBin` format.
+    /// Формат `YPBankBin`.
     Binary,
 }
 

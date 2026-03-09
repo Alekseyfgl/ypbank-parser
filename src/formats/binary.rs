@@ -5,7 +5,7 @@ use std::io::{BufWriter, ErrorKind, Read, Write};
 const MAGIC: [u8; 4] = *b"YPBN";
 const FIXED_BODY_SIZE: usize = 46;
 
-/// Reads transactions from the `YPBankBin` format.
+/// Читает транзакции из формата `YPBankBin`.
 pub fn read_binary<R: Read>(reader: R) -> Result<Vec<Transaction>> {
     let mut reader = reader;
     let mut transactions = Vec::new();
@@ -20,7 +20,7 @@ pub fn read_binary<R: Read>(reader: R) -> Result<Vec<Transaction>> {
 
         let mut magic = [0u8; 4];
         magic[0] = first[0];
-        read_exact_with_context(&mut reader, &mut magic[1..], "binary record magic")?;
+        read_exact_with_context(&mut reader, &mut magic[1..], "сигнатуры бинарной записи")?;
 
         record_number += 1;
         if magic != MAGIC {
@@ -30,7 +30,7 @@ pub fn read_binary<R: Read>(reader: R) -> Result<Vec<Transaction>> {
             });
         }
 
-        let record_size = read_u32(&mut reader, "binary record size")?;
+        let record_size = read_u32(&mut reader, "размера бинарной записи")?;
         if record_size < FIXED_BODY_SIZE as u32 {
             return Err(Error::InvalidBinaryRecordSize {
                 record: record_number,
@@ -39,14 +39,14 @@ pub fn read_binary<R: Read>(reader: R) -> Result<Vec<Transaction>> {
         }
 
         let mut body = vec![0u8; record_size as usize];
-        read_exact_with_context(&mut reader, &mut body, "binary record body")?;
+        read_exact_with_context(&mut reader, &mut body, "тела бинарной записи")?;
         transactions.push(parse_binary_body(&body, record_number)?);
     }
 
     Ok(transactions)
 }
 
-/// Writes transactions in the `YPBankBin` format.
+/// Записывает транзакции в формат `YPBankBin`.
 pub fn write_binary<W: Write>(writer: W, transactions: &[Transaction]) -> Result<()> {
     let mut writer = BufWriter::new(writer);
 
@@ -55,12 +55,12 @@ pub fn write_binary<W: Write>(writer: W, transactions: &[Transaction]) -> Result
         let description_len =
             u32::try_from(description.len()).map_err(|_| Error::InvalidBinaryRecord {
                 record: index + 1,
-                details: String::from("description is too long to fit into u32"),
+                details: String::from("описание слишком длинное и не помещается в u32"),
             })?;
         let record_size = u32::try_from(FIXED_BODY_SIZE + description.len()).map_err(|_| {
             Error::InvalidBinaryRecord {
                 record: index + 1,
-                details: String::from("record body is too large to fit into u32"),
+                details: String::from("тело записи слишком велико и не помещается в u32"),
             }
         })?;
 
@@ -97,7 +97,7 @@ fn parse_binary_body(body: &[u8], record_number: usize) -> Result<Transaction> {
         return Err(Error::InvalidBinaryRecord {
             record: record_number,
             details: format!(
-                "DESC_LEN is {description_len}, but {} bytes remain in record body",
+                "поле DESC_LEN равно {description_len}, но в теле записи осталось {} байт",
                 reader.remaining()
             ),
         });
@@ -107,7 +107,7 @@ fn parse_binary_body(body: &[u8], record_number: usize) -> Result<Transaction> {
     let description = String::from_utf8(raw_description.to_vec()).map_err(|error| {
         Error::InvalidBinaryRecord {
             record: record_number,
-            details: format!("DESCRIPTION is not valid UTF-8: {error}"),
+            details: format!("поле DESCRIPTION содержит некорректный UTF-8: {error}"),
         }
     })?;
 
@@ -189,7 +189,7 @@ impl<'a> BinaryBodyReader<'a> {
             return Err(Error::InvalidBinaryRecord {
                 record: self.record,
                 details: format!(
-                    "field {field} needs {length} bytes, but only {} remain",
+                    "для поля {field} требуется {length} байт, но осталось только {}",
                     self.remaining()
                 ),
             });
@@ -212,7 +212,7 @@ mod tests {
     fn must<T>(result: Result<T>) -> T {
         match result {
             Ok(value) => value,
-            Err(error) => panic!("unexpected error: {error}"),
+            Err(error) => panic!("неожиданная ошибка: {error}"),
         }
     }
 
@@ -265,7 +265,7 @@ mod tests {
     #[test]
     fn binary_magic_is_validated() {
         let bytes = b"FAIL\x00\x00\x00\x2e".to_vec();
-        let error = read_binary(bytes.as_slice()).expect_err("expected failure");
+        let error = read_binary(bytes.as_slice()).expect_err("ожидалась ошибка");
 
         assert!(matches!(error, Error::InvalidBinaryMagic { .. }));
     }

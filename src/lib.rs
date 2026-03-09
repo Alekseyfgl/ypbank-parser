@@ -1,9 +1,9 @@
 #![deny(missing_docs)]
-//! Library for reading, writing and converting YPBank transaction files.
+//! Библиотека для чтения, записи и конвертации файлов транзакций YPBank.
 //!
-//! The crate exposes a shared transaction model plus parsers/serializers for
-//! CSV, text and binary YPBank formats. All public read/write entry points are
-//! generic over [`std::io::Read`] and [`std::io::Write`].
+//! Библиотека предоставляет общую модель транзакции и парсеры/сериализаторы
+//! для форматов YPBank: CSV, text и binary. Все публичные точки входа для
+//! чтения и записи обобщены по [`std::io::Read`] и [`std::io::Write`].
 
 mod error;
 mod format;
@@ -17,7 +17,7 @@ pub use crate::types::{Transaction, TransactionStatus, TransactionType};
 
 use std::io::{Read, Write};
 
-/// Reads a list of transactions from any reader using the selected format.
+/// Читает список транзакций из любого источника в выбранном формате.
 pub fn read_transactions<R: Read>(reader: R, format: Format) -> Result<Vec<Transaction>> {
     match format {
         Format::Csv => read_csv(reader),
@@ -26,7 +26,7 @@ pub fn read_transactions<R: Read>(reader: R, format: Format) -> Result<Vec<Trans
     }
 }
 
-/// Writes a list of transactions to any writer using the selected format.
+/// Записывает список транзакций в любой приемник в выбранном формате.
 pub fn write_transactions<W: Write>(
     writer: W,
     format: Format,
@@ -39,7 +39,7 @@ pub fn write_transactions<W: Write>(
     }
 }
 
-/// Converts transactions from one format to another.
+/// Конвертирует транзакции из одного формата в другой.
 pub fn convert<R: Read, W: Write>(
     reader: R,
     input_format: Format,
@@ -65,14 +65,14 @@ mod tests {
     fn must<T>(result: Result<T>) -> T {
         match result {
             Ok(value) => value,
-            Err(error) => panic!("unexpected error: {error}"),
+            Err(error) => panic!("неожиданная ошибка: {error}"),
         }
     }
 
     fn must_io<T>(result: std::io::Result<T>) -> T {
         match result {
             Ok(value) => value,
-            Err(error) => panic!("unexpected i/o error: {error}"),
+            Err(error) => panic!("неожиданная ошибка ввода-вывода: {error}"),
         }
     }
 
@@ -170,7 +170,7 @@ mod tests {
         for (left_record, right_record) in left.iter().zip(right.iter()) {
             assert!(
                 crate::formats::transactions_equivalent(left_record, right_record),
-                "records are not equivalent:\nleft: {:?}\nright: {:?}",
+                "записи не эквивалентны:\nслева: {:?}\nсправа: {:?}",
                 left_record,
                 right_record
             );

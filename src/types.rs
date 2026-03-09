@@ -2,35 +2,35 @@ use crate::error::{Error, Result};
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 
-/// A single YPBank transaction shared by all supported formats.
+/// Одна транзакция YPBank, общая для всех поддерживаемых форматов.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Transaction {
-    /// Unique transaction identifier.
+    /// Уникальный идентификатор транзакции.
     pub tx_id: u64,
-    /// Transaction type.
+    /// Тип транзакции.
     pub tx_type: TransactionType,
-    /// Sender account or user identifier.
+    /// Идентификатор отправителя.
     pub from_user_id: u64,
-    /// Receiver account or user identifier.
+    /// Идентификатор получателя.
     pub to_user_id: u64,
-    /// Transaction amount in the smallest currency units.
+    /// Сумма транзакции в минимальных денежных единицах.
     pub amount: i64,
-    /// Unix timestamp in milliseconds.
+    /// Unix-время в миллисекундах.
     pub timestamp: u64,
-    /// Transaction status.
+    /// Статус транзакции.
     pub status: TransactionStatus,
-    /// Human-readable transaction description.
+    /// Человекочитаемое описание транзакции.
     pub description: String,
 }
 
-/// Type of a YPBank transaction.
+/// Тип транзакции YPBank.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TransactionType {
-    /// Deposit into an account.
+    /// Пополнение счета.
     Deposit,
-    /// Transfer between accounts.
+    /// Перевод между счетами.
     Transfer,
-    /// Withdrawal from an account.
+    /// Списание со счета.
     Withdrawal,
 }
 
@@ -51,7 +51,7 @@ impl TransactionType {
             _ => Err(Error::InvalidValue {
                 field: "TX_TYPE",
                 value: value.to_string(),
-                details: String::from("expected 0, 1 or 2"),
+                details: String::from("ожидается 0, 1 или 2"),
             }),
         }
     }
@@ -68,7 +68,7 @@ impl FromStr for TransactionType {
             _ => Err(Error::InvalidValue {
                 field: "TX_TYPE",
                 value: value.to_owned(),
-                details: String::from("expected DEPOSIT, TRANSFER or WITHDRAWAL"),
+                details: String::from("ожидается DEPOSIT, TRANSFER или WITHDRAWAL"),
             }),
         }
     }
@@ -84,14 +84,14 @@ impl Display for TransactionType {
     }
 }
 
-/// Processing status of a YPBank transaction.
+/// Статус обработки транзакции YPBank.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TransactionStatus {
-    /// The transaction completed successfully.
+    /// Транзакция успешно завершена.
     Success,
-    /// The transaction failed.
+    /// Транзакция завершилась ошибкой.
     Failure,
-    /// The transaction is still pending.
+    /// Транзакция еще находится в обработке.
     Pending,
 }
 
@@ -112,7 +112,7 @@ impl TransactionStatus {
             _ => Err(Error::InvalidValue {
                 field: "STATUS",
                 value: value.to_string(),
-                details: String::from("expected 0, 1 or 2"),
+                details: String::from("ожидается 0, 1 или 2"),
             }),
         }
     }
@@ -129,7 +129,7 @@ impl FromStr for TransactionStatus {
             _ => Err(Error::InvalidValue {
                 field: "STATUS",
                 value: value.to_owned(),
-                details: String::from("expected SUCCESS, FAILURE or PENDING"),
+                details: String::from("ожидается SUCCESS, FAILURE или PENDING"),
             }),
         }
     }

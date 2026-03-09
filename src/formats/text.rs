@@ -6,7 +6,7 @@ use crate::error::{Error, Result};
 use crate::types::{Transaction, TransactionStatus, TransactionType};
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 
-/// Reads transactions from the `YPBankText` format.
+/// Читает транзакции из формата `YPBankText`.
 pub fn read_text<R: Read>(reader: R) -> Result<Vec<Transaction>> {
     let reader = BufReader::new(reader);
     let mut transactions = Vec::new();
@@ -33,7 +33,7 @@ pub fn read_text<R: Read>(reader: R) -> Result<Vec<Transaction>> {
 
         let (key, value) = line.split_once(':').ok_or(Error::InvalidTextLine {
             line: line_number,
-            details: String::from("expected KEY: VALUE"),
+            details: String::from("ожидается строка в формате KEY: VALUE"),
         })?;
 
         builder.insert(key.trim(), value.trim(), record_number + 1, line_number)?;
@@ -47,7 +47,7 @@ pub fn read_text<R: Read>(reader: R) -> Result<Vec<Transaction>> {
     Ok(transactions)
 }
 
-/// Writes transactions in the `YPBankText` format.
+/// Записывает транзакции в формат `YPBankText`.
 pub fn write_text<W: Write>(writer: W, transactions: &[Transaction]) -> Result<()> {
     let mut writer = BufWriter::new(writer);
 
@@ -154,7 +154,7 @@ impl TextRecordBuilder {
             ),
             _ => Err(Error::InvalidTextLine {
                 line: line_number,
-                details: format!("unknown field {key}"),
+                details: format!("неизвестное поле {key}"),
             }),
         }
     }
@@ -221,14 +221,14 @@ mod tests {
     fn must<T>(result: Result<T>) -> T {
         match result {
             Ok(value) => value,
-            Err(error) => panic!("unexpected error: {error}"),
+            Err(error) => panic!("неожиданная ошибка: {error}"),
         }
     }
 
     #[test]
     fn text_roundtrip_preserves_transactions() {
         let input = concat!(
-            "# comment\n",
+            "# комментарий\n",
             "STATUS: SUCCESS\n",
             "TX_ID: 5\n",
             "TX_TYPE: DEPOSIT\n",
@@ -262,7 +262,7 @@ mod tests {
             "DESCRIPTION: \"x\"\n",
         );
 
-        let error = read_text(input.as_bytes()).expect_err("expected failure");
+        let error = read_text(input.as_bytes()).expect_err("ожидалась ошибка");
         assert!(matches!(error, Error::DuplicateField { .. }));
     }
 }

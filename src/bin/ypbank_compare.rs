@@ -25,12 +25,12 @@ fn main() -> ExitCode {
         Ok(Command::Run(args)) => match run(args) {
             Ok(()) => ExitCode::SUCCESS,
             Err(error) => {
-                eprintln!("Error: {error}");
+                eprintln!("Ошибка: {error}");
                 ExitCode::from(1)
             }
         },
         Err(error) => {
-            eprintln!("Error: {error}");
+            eprintln!("Ошибка: {error}");
             eprintln!("{}", usage());
             ExitCode::from(1)
         }
@@ -43,7 +43,7 @@ fn run(args: CompareArgs) -> Result<(), Error> {
 
     if transaction_sets_equivalent(&left, &right) {
         println!(
-            "The transaction records in '{}' and '{}' are identical.",
+            "Записи транзакций в '{}' и '{}' совпадают.",
             args.file1, args.file2
         );
         return Ok(());
@@ -54,7 +54,7 @@ fn run(args: CompareArgs) -> Result<(), Error> {
     }
 
     Err(Error::InvalidArgument(String::from(
-        "transaction sets are different",
+        "наборы транзакций отличаются",
     )))
 }
 
@@ -79,7 +79,7 @@ fn first_difference_message(
             {
                 let differing_fields = differing_fields(left_transaction, right_transaction);
                 return Some(format!(
-                    "Mismatch at record {}.\n'{}': {:?}\n'{}': {:?}\nDiffering fields: {}.",
+                    "Несовпадение в записи {}.\n'{}': {:?}\n'{}': {:?}\nОтличающиеся поля: {}.",
                     index + 1,
                     file1,
                     left_transaction,
@@ -90,7 +90,7 @@ fn first_difference_message(
             }
             (Some(left_transaction), None) => {
                 return Some(format!(
-                    "Mismatch at record {}: '{}' has extra transaction {:?}.",
+                    "Несовпадение в записи {}: '{}' содержит лишнюю транзакцию {:?}.",
                     index + 1,
                     file1,
                     left_transaction
@@ -98,7 +98,7 @@ fn first_difference_message(
             }
             (None, Some(right_transaction)) => {
                 return Some(format!(
-                    "Mismatch at record {}: '{}' has extra transaction {:?}.",
+                    "Несовпадение в записи {}: '{}' содержит лишнюю транзакцию {:?}.",
                     index + 1,
                     file2,
                     right_transaction
@@ -240,7 +240,7 @@ where
                 format2 = Some(argument_value(&args, &mut index, "--format2")?.parse()?);
             }
             other => {
-                return Err(Error::InvalidArgument(format!("unknown argument {other}")));
+                return Err(Error::InvalidArgument(format!("неизвестный аргумент {other}")));
             }
         }
 
@@ -259,15 +259,15 @@ fn argument_value<'a>(args: &'a [String], index: &mut usize, flag: &str) -> Resu
     *index += 1;
     args.get(*index)
         .map(String::as_str)
-        .ok_or_else(|| Error::InvalidArgument(format!("missing value for {flag}")))
+        .ok_or_else(|| Error::InvalidArgument(format!("отсутствует значение для {flag}")))
 }
 
 fn missing_argument(flag: &str) -> Error {
-    Error::InvalidArgument(format!("missing required argument {flag}"))
+    Error::InvalidArgument(format!("отсутствует обязательный аргумент {flag}"))
 }
 
 fn usage() -> &'static str {
-    "Usage: ypbank_compare --file1 <file> --format1 <csv|text|binary> --file2 <file> --format2 <csv|text|binary>"
+    "Использование: ypbank_compare --file1 <файл> --format1 <csv|text|binary> --file2 <файл> --format2 <csv|text|binary>"
 }
 
 #[cfg(test)]
@@ -302,10 +302,10 @@ mod tests {
             std::slice::from_ref(&right),
         ) {
             Some(message) => message,
-            None => panic!("difference should be reported"),
+            None => panic!("ожидалось сообщение о различии"),
         };
 
-        assert!(message.contains("Mismatch at record 1."));
+        assert!(message.contains("Несовпадение в записи 1."));
         assert!(message.contains("AMOUNT: 300 != 450"));
         assert!(message.contains("DESCRIPTION: \"Base transaction\" != \"Updated transaction\""));
     }
@@ -321,11 +321,11 @@ mod tests {
             &[],
         ) {
             Some(message) => message,
-            None => panic!("difference should be reported"),
+            None => panic!("ожидалось сообщение о различии"),
         };
 
         assert!(message.contains("left.csv"));
-        assert!(message.contains("extra transaction"));
+        assert!(message.contains("лишнюю транзакцию"));
         assert!(message.contains("tx_id: 1"));
     }
 

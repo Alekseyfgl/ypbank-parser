@@ -68,7 +68,7 @@ fn parse_text_value(field: &'static str, value: &str) -> Result<String> {
         let escaped = chars.next().ok_or(Error::InvalidValue {
             field,
             value: value.to_owned(),
-            details: String::from("unfinished escape sequence"),
+            details: String::from("незавершенная управляющая последовательность"),
         })?;
 
         match escaped {
@@ -81,7 +81,7 @@ fn parse_text_value(field: &'static str, value: &str) -> Result<String> {
                 return Err(Error::InvalidValue {
                     field,
                     value: value.to_owned(),
-                    details: format!("unsupported escape sequence \\{escaped}"),
+                    details: format!("неподдерживаемая управляющая последовательность \\{escaped}"),
                 });
             }
         }

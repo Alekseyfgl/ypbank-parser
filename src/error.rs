@@ -1,91 +1,91 @@
 use std::fmt::{Display, Formatter};
 use std::io;
 
-/// Convenient result alias used by the library.
+/// Удобный псевдоним результата, используемый библиотекой.
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// Errors returned by YPBank parsers, serializers and CLI helpers.
+/// Ошибки, которые возвращают парсеры, сериализаторы и CLI-утилиты YPBank.
 #[derive(Debug)]
 pub enum Error {
-    /// Wrapper around I/O failures.
+    /// Обертка над ошибками ввода-вывода.
     Io(io::Error),
-    /// Unknown format name passed from CLI or user input.
+    /// Неизвестное имя формата, переданное из CLI или пользовательского ввода.
     UnknownFormat(String),
-    /// Invalid command-line argument or unsupported value.
+    /// Некорректный аргумент командной строки или неподдерживаемое значение.
     InvalidArgument(String),
-    /// CSV header does not match the specification.
+    /// Заголовок CSV не соответствует спецификации.
     InvalidCsvHeader {
-        /// Header line that was actually read from the file.
+        /// Строка заголовка, фактически прочитанная из файла.
         found: String,
     },
-    /// CSV line is malformed.
+    /// Строка CSV имеет неверный формат.
     InvalidCsvRecord {
-        /// 1-based line number of the malformed CSV record.
+        /// Номер некорректной CSV-записи, начиная с 1.
         line: usize,
-        /// Human-readable parsing details.
+        /// Человекочитаемые подробности ошибки парсинга.
         details: String,
     },
-    /// Text line is malformed.
+    /// Текстовая строка имеет неверный формат.
     InvalidTextLine {
-        /// 1-based line number of the malformed text line.
+        /// Номер некорректной текстовой строки, начиная с 1.
         line: usize,
-        /// Human-readable parsing details.
+        /// Человекочитаемые подробности ошибки парсинга.
         details: String,
     },
-    /// Text record is incomplete or inconsistent.
+    /// Текстовая запись неполная или противоречивая.
     InvalidTextRecord {
-        /// 1-based record number in the text file.
+        /// Номер записи в текстовом файле, начиная с 1.
         record: usize,
-        /// Human-readable parsing details.
+        /// Человекочитаемые подробности ошибки парсинга.
         details: String,
     },
-    /// A required field is missing from a record.
+    /// В записи отсутствует обязательное поле.
     MissingField {
-        /// 1-based record number where the field is missing.
+        /// Номер записи, где отсутствует поле, начиная с 1.
         record: usize,
-        /// Name of the missing field.
+        /// Имя отсутствующего поля.
         field: &'static str,
     },
-    /// A field is repeated inside a text record.
+    /// Поле повторяется внутри текстовой записи.
     DuplicateField {
-        /// 1-based record number where the field is duplicated.
+        /// Номер записи, где поле дублируется, начиная с 1.
         record: usize,
-        /// Name of the duplicated field.
+        /// Имя дублирующегося поля.
         field: &'static str,
     },
-    /// Field value cannot be parsed or validated.
+    /// Значение поля не удалось распарсить или провалидировать.
     InvalidValue {
-        /// Name of the field with an invalid value.
+        /// Имя поля с некорректным значением.
         field: &'static str,
-        /// Original textual or numeric representation.
+        /// Исходное текстовое или числовое представление.
         value: String,
-        /// Human-readable validation details.
+        /// Человекочитаемые подробности валидации.
         details: String,
     },
-    /// Binary magic is invalid.
+    /// Сигнатура бинарной записи некорректна.
     InvalidBinaryMagic {
-        /// 1-based binary record number.
+        /// Номер бинарной записи, начиная с 1.
         record: usize,
-        /// Four bytes actually read instead of the expected magic.
+        /// Четыре байта, фактически прочитанные вместо ожидаемой сигнатуры.
         found: [u8; 4],
     },
-    /// Binary record size is smaller than the fixed body.
+    /// Размер бинарной записи меньше фиксированной части тела.
     InvalidBinaryRecordSize {
-        /// 1-based binary record number.
+        /// Номер бинарной записи, начиная с 1.
         record: usize,
-        /// Size value from the record header.
+        /// Значение размера из заголовка записи.
         size: u32,
     },
-    /// Binary record body is malformed.
+    /// Тело бинарной записи имеет неверный формат.
     InvalidBinaryRecord {
-        /// 1-based binary record number.
+        /// Номер бинарной записи, начиная с 1.
         record: usize,
-        /// Human-readable parsing details.
+        /// Человекочитаемые подробности ошибки парсинга.
         details: String,
     },
-    /// The input ended before a full structure could be read.
+    /// Входные данные закончились до чтения полной структуры.
     UnexpectedEof {
-        /// Structure that was being read when the input ended.
+        /// Структура, которая читалась в момент окончания входных данных.
         context: &'static str,
     },
 }
@@ -93,43 +93,46 @@ pub enum Error {
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Io(error) => write!(f, "i/o error: {error}"),
-            Self::UnknownFormat(value) => write!(f, "unknown format: {value}"),
-            Self::InvalidArgument(details) => write!(f, "invalid argument: {details}"),
+            Self::Io(error) => write!(f, "ошибка ввода-вывода: {error}"),
+            Self::UnknownFormat(value) => write!(f, "неизвестный формат: {value}"),
+            Self::InvalidArgument(details) => write!(f, "некорректный аргумент: {details}"),
             Self::InvalidCsvHeader { found } => {
-                write!(f, "invalid CSV header: {found}")
+                write!(f, "некорректный заголовок CSV: {found}")
             }
             Self::InvalidCsvRecord { line, details } => {
-                write!(f, "invalid CSV record at line {line}: {details}")
+                write!(f, "некорректная CSV-запись в строке {line}: {details}")
             }
             Self::InvalidTextLine { line, details } => {
-                write!(f, "invalid text line {line}: {details}")
+                write!(f, "некорректная текстовая строка {line}: {details}")
             }
             Self::InvalidTextRecord { record, details } => {
-                write!(f, "invalid text record {record}: {details}")
+                write!(f, "некорректная текстовая запись {record}: {details}")
             }
             Self::MissingField { record, field } => {
-                write!(f, "record {record} is missing required field {field}")
+                write!(f, "в записи {record} отсутствует обязательное поле {field}")
             }
             Self::DuplicateField { record, field } => {
-                write!(f, "record {record} contains duplicate field {field}")
+                write!(f, "запись {record} содержит повторяющееся поле {field}")
             }
             Self::InvalidValue {
                 field,
                 value,
                 details,
-            } => write!(f, "invalid value for {field} ({value}): {details}"),
+            } => write!(f, "некорректное значение поля {field} ({value}): {details}"),
             Self::InvalidBinaryMagic { record, found } => {
-                write!(f, "invalid binary magic in record {record}: {found:02X?}")
+                write!(
+                    f,
+                    "некорректная сигнатура бинарной записи {record}: {found:02X?}"
+                )
             }
             Self::InvalidBinaryRecordSize { record, size } => {
-                write!(f, "invalid binary record size in record {record}: {size}")
+                write!(f, "некорректный размер бинарной записи {record}: {size}")
             }
             Self::InvalidBinaryRecord { record, details } => {
-                write!(f, "invalid binary record {record}: {details}")
+                write!(f, "некорректная бинарная запись {record}: {details}")
             }
             Self::UnexpectedEof { context } => {
-                write!(f, "unexpected end of input while reading {context}")
+                write!(f, "неожиданный конец входных данных при чтении {context}")
             }
         }
     }

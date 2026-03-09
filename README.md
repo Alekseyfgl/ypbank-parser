@@ -101,11 +101,17 @@ cargo test
 
 Конвертер читает входной файл и пишет результат в `stdout`.
 
+Справка по аргументам:
+
+```bash
+cargo run -- --help
+```
+
 Пример конвертации `csv -> text`:
 
 ```bash
 cargo run -- \
-  --input Примеры_файлов/records_example.csv \
+  --input 'Примеры_файлов/records_example.csv' \
   --input-format csv \
   --output-format text
 ```
@@ -114,30 +120,68 @@ cargo run -- \
 
 ```bash
 cargo run -- \
-  --input Примеры_файлов/records_example.csv \
+  --input 'Примеры_файлов/records_example.csv' \
   --input-format csv \
   --output-format binary \
   > output.bin
+```
+
+Если использовать `> output.bin`, файл будет создан в текущей директории, из которой запущена команда.
+
+Пример конвертации `text -> csv` с сохранением в файл:
+
+```bash
+cargo run -- \
+  --input 'Примеры_файлов/records_example.txt' \
+  --input-format text \
+  --output-format csv \
+  > output.csv
 ```
 
 ## CLI: сравнение
 
 Компаратор читает два файла в любых поддерживаемых форматах и сообщает, совпадают ли они.
 
-Пример:
+Справка по аргументам:
+
+```bash
+cargo run --bin ypbank_compare -- --help
+```
+
+Пример сравнения файлов из репозитория:
 
 ```bash
 cargo run --bin ypbank_compare -- \
-  --file1 Примеры_файлов/records_example.bin \
+  --file1 'Примеры_файлов/records_example.bin' \
   --format1 binary \
-  --file2 Примеры_файлов/records_example.csv \
+  --file2 'Примеры_файлов/records_example.csv' \
   --format2 csv
 ```
 
 Если записи идентичны, программа печатает:
 
 ```text
-The transaction records in '...' and '...' are identical.
+Записи транзакций в '...' и '...' совпадают.
 ```
 
 Если записи отличаются, программа показывает первую несовпавшую запись и список отличающихся полей.
+
+## Полный сценарий проверки
+
+Сконвертировать `csv -> binary`, сохранить результат в файл и затем сравнить его с исходным CSV:
+
+```bash
+cargo run -- \
+  --input 'Примеры_файлов/records_example.csv' \
+  --input-format csv \
+  --output-format binary \
+  > output.bin
+```
+
+```bash
+cargo run --bin ypbank_compare -- \
+  --file1 output.bin \
+  --format1 binary \
+  --file2 'Примеры_файлов/records_example.csv' \
+  --format2 csv
+```

@@ -8,7 +8,7 @@ use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 
 const HEADER: &str = "TX_ID,TX_TYPE,FROM_USER_ID,TO_USER_ID,AMOUNT,TIMESTAMP,STATUS,DESCRIPTION";
 
-/// Reads transactions from the `YPBankCsv` format.
+/// Читает транзакции из формата `YPBankCsv`.
 pub fn read_csv<R: Read>(reader: R) -> Result<Vec<Transaction>> {
     let mut reader = BufReader::new(reader);
     let mut header_line = String::new();
@@ -19,7 +19,7 @@ pub fn read_csv<R: Read>(reader: R) -> Result<Vec<Transaction>> {
         let bytes_read = reader.read_line(&mut header_line)?;
         if bytes_read == 0 {
             return Err(Error::InvalidCsvHeader {
-                found: String::from("<empty file>"),
+                found: String::from("<пустой файл>"),
             });
         }
 
@@ -60,7 +60,7 @@ pub fn read_csv<R: Read>(reader: R) -> Result<Vec<Transaction>> {
         if fields.len() != 8 {
             return Err(Error::InvalidCsvRecord {
                 line: line_number,
-                details: format!("expected 8 fields, found {}", fields.len()),
+                details: format!("ожидалось 8 полей, найдено {}", fields.len()),
             });
         }
 
@@ -81,7 +81,7 @@ pub fn read_csv<R: Read>(reader: R) -> Result<Vec<Transaction>> {
     Ok(transactions)
 }
 
-/// Writes transactions in the `YPBankCsv` format.
+/// Записывает транзакции в формат `YPBankCsv`.
 pub fn write_csv<W: Write>(writer: W, transactions: &[Transaction]) -> Result<()> {
     let mut writer = BufWriter::new(writer);
     writeln!(writer, "{HEADER}")?;
@@ -133,7 +133,7 @@ fn split_csv_record(line: &str) -> std::result::Result<Vec<String>, String> {
     }
 
     if in_quotes {
-        return Err(String::from("unterminated quoted field"));
+        return Err(String::from("не закрыто поле в кавычках"));
     }
 
     fields.push(current);
@@ -147,7 +147,7 @@ mod tests {
     fn must<T>(result: Result<T>) -> T {
         match result {
             Ok(value) => value,
-            Err(error) => panic!("unexpected error: {error}"),
+            Err(error) => panic!("неожиданная ошибка: {error}"),
         }
     }
 
@@ -169,7 +169,7 @@ mod tests {
 
     #[test]
     fn csv_header_is_validated() {
-        let error = read_csv(b"bad\n1,2,3\n".as_slice()).expect_err("expected failure");
+        let error = read_csv(b"bad\n1,2,3\n".as_slice()).expect_err("ожидалась ошибка");
 
         assert!(matches!(error, Error::InvalidCsvHeader { .. }));
     }
