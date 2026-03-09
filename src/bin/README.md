@@ -1,0 +1,6 @@
+# CLI Binaries
+
+В каталоге находятся исполняемые target-crate проекта:
+
+- `src/main.rs` — конвертация между форматами YPBank
+- `src/bin/ypbank_compare.rs` — сравнение двух файлов с транзакциями
