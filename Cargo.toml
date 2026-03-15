@@ -5,3 +5,7 @@ edition = "2024"
 default-run = "ypbank_converter"
 
 [dependencies]
+
+[dev-dependencies]
+clap = { version = "4.5", features = ["derive"] }
+strum = { version = "0.27", features = ["derive"] }

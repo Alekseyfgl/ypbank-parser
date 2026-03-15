@@ -81,7 +81,8 @@ src/
 
 В репозитории лежат:
 
-- примеры файлов: `Примеры_файлов/`
+- примеры файлов: `Примеры_файлов/`
+- учебные Rust examples и инструкция по их запуску: `examples/README.md`
 - спецификации форматов: `Спецификация_форматов/`
 
 ## Сборка и тесты
@@ -111,7 +112,7 @@ cargo run -- --help
 
 ```bash
 cargo run -- \
-  --input 'Примеры_файлов/records_example.csv' \
+  --input 'Примеры_файлов/records_example.csv' \
   --input-format csv \
   --output-format text
 ```
@@ -120,7 +121,7 @@ cargo run -- \
 
 ```bash
 cargo run -- \
-  --input 'Примеры_файлов/records_example.csv' \
+  --input 'Примеры_файлов/records_example.csv' \
   --input-format csv \
   --output-format binary \
   > output.bin
@@ -132,7 +133,7 @@ cargo run -- \
 
 ```bash
 cargo run -- \
-  --input 'Примеры_файлов/records_example.txt' \
+  --input 'Примеры_файлов/records_example.txt' \
   --input-format text \
   --output-format csv \
   > output.csv
@@ -152,9 +153,9 @@ cargo run --bin ypbank_compare -- --help
 
 ```bash
 cargo run --bin ypbank_compare -- \
-  --file1 'Примеры_файлов/records_example.bin' \
+  --file1 'Примеры_файлов/records_example.bin' \
   --format1 binary \
-  --file2 'Примеры_файлов/records_example.csv' \
+  --file2 'Примеры_файлов/records_example.csv' \
   --format2 csv
 ```
 
@@ -172,7 +173,7 @@ cargo run --bin ypbank_compare -- \
 
 ```bash
 cargo run -- \
-  --input 'Примеры_файлов/records_example.csv' \
+  --input 'Примеры_файлов/records_example.csv' \
   --input-format csv \
   --output-format binary \
   > output.bin
@@ -182,6 +183,6 @@ cargo run -- \
 cargo run --bin ypbank_compare -- \
   --file1 output.bin \
   --format1 binary \
-  --file2 'Примеры_файлов/records_example.csv' \
+  --file2 'Примеры_файлов/records_example.csv' \
   --format2 csv
 ```

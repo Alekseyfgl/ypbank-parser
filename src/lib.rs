@@ -58,7 +58,7 @@ mod tests {
 
     fn fixture_path(file_name: &str) -> PathBuf {
         PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("Примеры_файлов")
+            .join("Примеры_файлов")
             .join(file_name)
     }
 
